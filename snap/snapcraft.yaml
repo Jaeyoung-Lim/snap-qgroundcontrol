@@ -1,4 +1,3 @@
-
 name: qgroundcontrol
 version: '3.2+git'
 summary: Cross-platform ground control station for drones 
@@ -16,4 +15,21 @@ parts:
 
 apps:
   start:
-    command: ./qgroundcontrol-start.sh
+    environment:
+      LD_LIBRARY_PATH: $SNAP/usr/lib/x86_64-linux-gnu:$SNAP/Qt/libs:$LD_LIBRARY_PATH
+      QML2_IMPORT_PATH: $SNAP/Qt/qml
+      QT_PLUGIN_PATH: $SNAP/Qt/plugins
+    command: QGroundControl
+    desktop: qgroundcontrol.desktop
+    plugs:
+      - desktop
+      - desktop-legacy
+      - gsettings
+      - home
+      - network
+      - network-bind
+      - network-manager
+      - pulseaudio
+      - removable-media
+      - unity7
+      - opengl
