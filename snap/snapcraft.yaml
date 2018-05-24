@@ -13,42 +13,6 @@ parts:
   qgroundcontrol:
     plugin: dump
     source: https://github.com/mavlink/qgroundcontrol/releases/download/v3.3.2/QGroundControl.tar.bz2
-    build-packages:
-      - pulseaudio
-      - libflac8
-      - libqt5concurrent5
-      - libgstreamer1.0-0
-      - libx11-6
-      - libx11-xcb1
-      - libxcb-xkb1
-      - libxcb-xfixes0
-      - libxcb-sync1
-      - libxcb-shm0
-      - libxcb-shape0
-      - libxcb-randr0
-      - libxcb-render-util0
-      - libxkbcommon0
-      - libxkbcommon-x11-0
-      - libwind0-heimdal
-      - libsndio6.1
-    stage-packages:
-      - pulseaudio
-      - libflac8
-      - libqt5concurrent5
-      - libgstreamer1.0-0
-      - libx11-6
-      - libx11-xcb1
-      - libxcb-xkb1
-      - libxcb-xfixes0
-      - libxcb-sync1
-      - libxcb-shm0
-      - libxcb-shape0
-      - libxcb-randr0
-      - libxcb-render-util0
-      - libxkbcommon0
-      - libxkbcommon-x11-0
-      - libwind0-heimdal
-      - libsndio6.1
 
 apps:
   start:
