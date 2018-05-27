@@ -12,11 +12,57 @@ parts:
   qgroundcontrol:
     plugin: dump
     source: https://github.com/mavlink/qgroundcontrol/releases/download/v3.3.2/QGroundControl.tar.bz2
+    stage-packages:
+      - libqt5xmlpatterns5
+      - libqt5quickparticles5-gles
+      - libpulse0
+      - libpulse-mainloop-glib0
+      - libflac8 
+      - libqt5concurrent5 
+      - libgstreamer1.0-0
+      - libgstreamer-plugins-base1.0-0
+      - libdouble-conversion1v5
+      - libfontconfig1
+      - libharfbuzz-icu0
+      - libhcrypto4-heimdal
+      - libxss1
+      - libx11-6 
+      - libx11-xcb1 
+      - libxcb-xkb1 
+      - libxcb-xfixes0 
+      - libxcb-sync1 
+      - libxcb-shm0 
+      - libxcb-shape0 
+      - libxcb-randr0 
+      - libxcb-render-util0
+      - libxcb-util1
+      - libxcb-keysyms1
+      - libxcb-icccm4
+      - libxcb-image0
+      - libxkbcommon0 
+      - libxkbcommon-x11-0 
+      - libwind0-heimdal 
+      - libsndio6.1
+      - libwayland-egl1-mesa
+      - libwayland-cursor0
+      - libxcursor1
+      - libspeechd2
+      - libpq5
+      - libsdl2-2.0-0
+      - libxrandr2
+      - samba-libs
+      - nvidia-384
+      # - qt5-default
+  # qt:
+  #   plugin: autotools
+  #   source: https://code.qt.io/qt/qt5.git
+  #   source-branch: v5.9.3
+
 
 apps:
   start:
     environment:
-      LD_LIBRARY_PATH: $SNAP/usr/lib/x86_64-linux-gnu:$SNAP/Qt/libs:$LD_LIBRARY_PATH
+      LD_LIBRARY_PATH: $SNAP/usr/lib/x86_64-linux-gnu:$SNAP/usr/lib/x86_64-linux-gnu/pulseradio:$SNAP/Qt/libs:$LD_LIBRARY_PATH
       QML2_IMPORT_PATH: $SNAP/Qt/qml
       QT_PLUGIN_PATH: $SNAP/Qt/plugins
     command: QGroundControl
