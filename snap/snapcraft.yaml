@@ -52,12 +52,17 @@ parts:
       - libxrandr2
       - samba-libs
       - nvidia-384
-      - qt5-default
+      # - qt5-default
+  # qt:
+  #   plugin: autotools
+  #   source: https://code.qt.io/qt/qt5.git
+  #   source-branch: v5.9.3
+
 
 apps:
   start:
     environment:
-      LD_LIBRARY_PATH: $SNAP/usr/lib/x86_64-linux-gnu:$SNAP/Qt/libs:$LD_LIBRARY_PATH
+      LD_LIBRARY_PATH: $SNAP/usr/lib/x86_64-linux-gnu:$SNAP/usr/lib/x86_64-linux-gnu/pulseradio:$SNAP/Qt/libs:$LD_LIBRARY_PATH
       QML2_IMPORT_PATH: $SNAP/Qt/qml
       QT_PLUGIN_PATH: $SNAP/Qt/plugins
     command: QGroundControl
