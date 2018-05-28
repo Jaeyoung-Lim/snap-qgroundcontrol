@@ -10,72 +10,117 @@ confinement: strict # use 'strict' once you have the right plugs and slots
 
 parts:
   qgroundcontrol:
-    plugin: dump
-    source: https://github.com/mavlink/qgroundcontrol/releases/download/v3.3.2/QGroundControl.tar.bz2
-    stage-packages:
-      - libqt5xmlpatterns5
-      - libqt5quickparticles5-gles
-      - libpulse0
-      - libpulse-mainloop-glib0
-      - libflac8 
-      - libqt5concurrent5 
-      - libgstreamer1.0-0
-      - libgstreamer-plugins-base1.0-0
-      - libdouble-conversion1v5
-      - libfontconfig1
-      - libharfbuzz-icu0
-      - libhcrypto4-heimdal
-      - libxss1
-      - libx11-6 
-      - libx11-xcb1 
-      - libxcb-xkb1 
-      - libxcb-xfixes0 
-      - libxcb-sync1 
-      - libxcb-shm0 
-      - libxcb-shape0 
-      - libxcb-randr0 
-      - libxcb-render-util0
-      - libxcb-util1
-      - libxcb-keysyms1
-      - libxcb-icccm4
-      - libxcb-image0
-      - libxkbcommon0 
-      - libxkbcommon-x11-0 
-      - libwind0-heimdal 
-      - libsndio6.1
-      - libwayland-egl1-mesa
-      - libwayland-cursor0
-      - libxcursor1
-      - libspeechd2
-      - libpq5
-      - libsdl2-2.0-0
-      - libxrandr2
-      - samba-libs
-      - nvidia-384
-      # - qt5-default
-  # qt:
-  #   plugin: autotools
-  #   source: https://code.qt.io/qt/qt5.git
-  #   source-branch: v5.9.3
-
-
-apps:
-  start:
+    plugin: autotools
+    source: https://github.com/mavlink/qgroundcontrol.git
+    after: [qt]
+  qt:
+    plugin: qtbuilder
+    qt-version: 5.9.3
+    qt-source-git: https://code.qt.io/qt/qt5.git
+    qt-submodules: ['qtbase', 'qtimageformats']
+    # qt-patches-base-url: https://raw.githubusercontent.com/telegramdesktop/tdesktop/master/Telegram/Patches
+    # qt-patches-path: patches
+    # qt-extra-plugins:
+    #   - platforminputcontexts:
+    #     - https://github.com/telegramdesktop/fcitx.git
+    #     - https://github.com/telegramdesktop/hime.git
     environment:
-      LD_LIBRARY_PATH: $SNAP/usr/lib/x86_64-linux-gnu:$SNAP/usr/lib/x86_64-linux-gnu/pulseradio:$SNAP/Qt/libs:$LD_LIBRARY_PATH
-      QML2_IMPORT_PATH: $SNAP/Qt/qml
-      QT_PLUGIN_PATH: $SNAP/Qt/plugins
-    command: QGroundControl
-    desktop: qgroundcontrol.desktop
-    plugs:
-      - desktop
-      - desktop-legacy
-      - gsettings
-      - home
-      - network
-      - network-bind
-      - network-manager
-      - pulseaudio
-      - removable-media
-      - unity7
+      - CC: gcc-7
+      - CXX: g++-7
+      - QMAKE_CC: gcc-7
+      - QMAKE_CXX: g++-7
+    build-packages:
+      - libasound2-dev
+      - libdbusmenu-glib-dev
+      - libffi-dev
+      - liblzma-dev
+      - libpulse-dev
+      - libssl-dev
+      - libx11-xcb-dev
+      - libxcb-icccm4-dev
+      - libxcb-image0-dev
+      - libxcb-keysyms1-dev
+      - libxcb-randr0-dev
+      - libxcb-render-util0-dev
+      - libxcb-sync-dev
+      - libxcb-util0-dev
+      - libxcb-xfixes0-dev
+      - libxcb1-dev
+      - libxrender-dev
+    configflags:
+      - -prefix
+      - $SNAPCRAFT_STAGE
+      - -release
+      - -force-debug-info
+      - -opensource
+      - -confirm-license
+      - -qt-zlib
+      - -qt-libpng
+      - -qt-libjpeg
+      - -qt-freetype
+      - -qt-harfbuzz
+      - -qt-pcre
+      - -qt-xcb
+      - -qt-xkbcommon-x11
+      - -static
+      - -dbus-runtime
+      - -openssl-linked
+      - -nomake
+      - examples
+      - -nomake
+      - tests
+    after:
+      - libxkbcommon
+      - gcc7
+    prime: [-./*]
+
+  libxkbcommon:
+    source: https://github.com/xkbcommon/libxkbcommon.git
+    source-depth: 1
+    plugin: autotools
+    build-packages:
+      - xutils-dev
+      - bison
+      - python-xcbgen
+    configflags:
+      - --disable-x11
+    prime: [-./*]
+
+  gcc7:
+    plugin: nil
+    build-packages:
+      - libmpc-dev
+      - libcloog-ppl-dev
+    prepare: |
+      echo "deb http://ppa.launchpad.net/ubuntu-toolchain-r/test/ubuntu xenial main" | \
+            sudo tee /etc/apt/sources.list.d/ubuntu-toolchain-r.list
+      sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 60C317803A41BA51845E371A1E9377A2BA9EF27F
+      sudo apt-get update \
+        -o Dir::Etc::sourcelist="sources.list.d/ubuntu-toolchain-r.list" \
+        -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0"
+    install: |
+      sudo apt install gcc-7 g++-7 -o Debug::pkgProblemResolver=yes --no-install-recommends -y
+      sudo apt-mark auto gcc-7 g++-7
+      sudo rm -f /etc/apt/sources.list.d/ubuntu-toolchain-r.list
+    prime: [-./*]
+
+apps: 
+  start: 
+    environment: 
+      LD_LIBRARY_PATH: $SNAP/usr/lib/x86_64-linux-gnu:$SNAP/usr/lib/x86_64-linux-gnu/pulseradio:$SNAP/Qt/libs:$LD_LIBRARY_PATH 
+      QML2_IMPORT_PATH: $SNAP/Qt/qml 
+      QT_PLUGIN_PATH: $SNAP/Qt/plugins 
+    command: QGroundControl 
+    desktop: qgroundcontrol.desktop 
+    plugs: 
+      - desktop 
+      - desktop-legacy 
+      - gsettings 
+      - home 
+      - network 
+      - network-bind 
+      - network-manager 
+      - pulseaudio 
+      - removable-media 
+      - unity7 
       - opengl
